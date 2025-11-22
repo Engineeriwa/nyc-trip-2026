@@ -13,11 +13,13 @@
             --glass: rgba(255, 255, 255, 0.9);
             --glass-hover: #ffffff;
             --text: #333;
+            --link: #0066cc;
         }
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: "Noto Sans JP", sans-serif; background: #f4f4f4; color: var(--text); }
+        a { color: var(--link); text-decoration: none; }
 
-        /* --- 1. 🔒 ログイン画面 (変更なし) --- */
+        /* --- 1. 🔒 ログイン画面 --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #121212; color: white; z-index: 9999;
@@ -31,20 +33,28 @@
         /* --- 2. 🗽 メインビジュアル & ナビゲーションバナー --- */
         #hero-header {
             position: relative;
-            height: 60vh; /* 画面の60%を占める */
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1496442226666-8d4a0e94388b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1496442226666-8d4a0e94388b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
             transition: height 0.5s ease;
         }
-        /* コンテンツ表示時はヘッダーを小さくするクラス */
         body.content-active #hero-header { height: 30vh; }
 
         .hero-title { font-family: 'Montserrat', sans-serif; font-size: 3rem; font-weight: 900; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; }
         .hero-date { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; margin-top: 10px; opacity: 0.9; }
 
+        /* 更新履歴ボタン (トップ用) */
+        .news-btn-top {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5);
+            padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
+            backdrop-filter: blur(5px); transition: background 0.3s;
+        }
+        .news-btn-top:hover { background: rgba(255,255,255,0.4); }
+
         /* --- バナー型ナビゲーション --- */
         #nav-container {
-            width: 90%; max-width: 1000px; margin: -50px auto 30px; /* ヘッダーに重ねる */
+            width: 90%; max-width: 1000px; margin: -50px auto 30px;
             display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;
             position: relative; z-index: 10;
         }
@@ -69,7 +79,26 @@
         h2 { color: var(--primary); border-left: 5px solid var(--primary); padding-left: 15px; margin-top: 0; }
         h3 { color: #444; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
 
-        /* ✈️ 荷物詳細スタイル (重要) */
+        /* 📅 スケジュール (詳細版) */
+        .day-header {
+            background: #f0f4f8; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;
+            font-weight: bold; color: var(--primary); display: flex; justify-content: space-between; align-items: center;
+        }
+        .timeline { position: relative; padding-left: 20px; margin-bottom: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 5px; bottom: 0; width: 2px; background: #e0e0e0; }
+        .event { margin-bottom: 25px; position: relative; }
+        .event::after { content: ''; position: absolute; left: -25px; top: 5px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .event-time { font-weight: bold; color: var(--accent); font-size: 0.9rem; margin-bottom: 4px; display: block; }
+        .event-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #222; }
+        .event-desc { font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 8px; }
+        .event-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .link-tag {
+            font-size: 0.8rem; background: #eef; color: var(--primary); padding: 4px 10px; border-radius: 15px;
+            transition: background 0.2s; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .link-tag:hover { background: #dde; }
+
+        /* ✈️ 荷物詳細 */
         .rules-container { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         .rule-block { padding: 20px; border-bottom: 1px solid #eee; }
         .rule-block:last-child { border-bottom: none; }
@@ -78,25 +107,36 @@
         .rule-list { margin: 0; padding-left: 20px; line-height: 1.6; }
         .rule-list li { margin-bottom: 5px; }
         .exception-box { background: #fff3e0; border: 1px solid #ffe0b2; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 0.9rem; color: #e65100; }
-        
-        /* 予算テーブル */
+
+        /* 予算テーブル & フライトチケット (前回同様) */
         table.budget { width: 100%; border-collapse: collapse; margin-top: 10px; }
         table.budget th, table.budget td { padding: 12px; border-bottom: 1px solid #eee; }
         .price { text-align: right; font-weight: bold; font-family: 'Montserrat', sans-serif; }
-
-        /* フライトチケット風 */
         .ticket { border: 2px solid #ccc; border-radius: 10px; margin-bottom: 15px; }
         .ticket-top { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; font-weight: bold; }
         .ticket-main { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .airport { font-size: 2rem; font-weight: 900; line-height: 1; }
         .ticket-sub { padding: 10px 15px; background: #f9f9f9; font-size: 0.9rem; border-top: 1px dashed #ccc; }
 
+        /* 📢 更新履歴ポップアップ */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 500px; border-radius: 16px; padding: 25px;
+            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;
+        }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #999; cursor: pointer; }
+        .news-item { padding: 12px 0; border-bottom: 1px solid #eee; }
+        .news-date { display: inline-block; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
+
         /* レスポンシブ */
         @media (max-width: 600px) {
             .hero-title { font-size: 2.5rem; }
             #nav-container { grid-template-columns: 1fr 1fr; }
-            /* スマホでバナーを2列にする */
-            .nav-card:last-child { grid-column: span 2; } /* マップだけ横長に */
+            .nav-card:last-child { grid-column: span 2; }
+            .event-links { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
@@ -109,7 +149,27 @@
         <p id="error-msg" style="color: #ff5252; display: none; margin-top: 15px;">パスワードが違います</p>
     </div>
 
+    <div id="news-modal" class="modal-overlay" onclick="closeNews(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeNewsBtn()">×</span>
+            <h3 style="margin-top:0; color:var(--primary);">🔔 更新履歴</h3>
+            <div class="news-item">
+                <span class="news-date">2025.11.22</span>
+                <div><strong>スケジュール機能強化:</strong> 時間軸表示に変更し、スポットごとのリンクを追加できるようにしました。</div>
+            </div>
+            <div class="news-item">
+                <span class="news-date">2025.11.22</span>
+                <div><strong>ホテル地図更新:</strong> 指定のGoogleマップリンクを埋め込みました。</div>
+            </div>
+            <div class="news-item">
+                <span class="news-date">2025.11.22</span>
+                <div><strong>更新履歴復活:</strong> トップ画面とヘッダーからいつでも確認できるようになりました。</div>
+            </div>
+        </div>
+    </div>
+
     <header id="hero-header">
+        <button class="news-btn-top" onclick="openNews()">🔔 更新履歴</button>
         <h1 class="hero-title">NYC 2026</h1>
         <p class="hero-date">Feb 4 - Feb 8 | Family Trip</p>
     </header>
@@ -140,25 +200,84 @@
     <div id="content-area">
         
         <section id="schedule" class="section active">
+            
             <div class="card">
-                <h2>📅 簡易スケジュール</h2>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 15px;">
-                        <strong>2/4 (水)</strong> JFK着 ➜ Times Square
-                    </li>
-                    <li style="margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 15px;">
-                        <strong>2/5 (木)</strong> 自由の女神 ➜ 金融街 ➜ 9/11 ➜ ブルックリン橋
-                    </li>
-                    <li style="margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 15px;">
-                        <strong>2/6 (金)</strong> 5番街 ➜ Top of the Rock ➜ Wicked
-                    </li>
-                    <li style="margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 15px;">
-                        <strong>2/7 (土)</strong> MET美術館 ➜ セントラルパーク ➜ NBA観戦
-                    </li>
-                    <li style="margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 15px;">
-                        <strong>2/8 (日)</strong> 帰国 (JFK発)
-                    </li>
-                </ul>
+                <div class="day-header">Day 1: 2/4 (水) 到着 & タイムズスクエア</div>
+                <div class="timeline">
+                    <div class="event">
+                        <span class="event-time">16:25</span>
+                        <div class="event-title">JFK空港 到着</div>
+                        <div class="event-desc">入国審査 (約60分) → 荷物受取 → Uberでホテルへ移動</div>
+                    </div>
+                    <div class="event">
+                        <span class="event-time">19:00</span>
+                        <div class="event-title">ホテルチェックイン</div>
+                        <div class="event-desc">Romer Hell's Kitchen</div>
+                        <div class="event-links">
+                            <a href="https://www.romerhellskitchen.com/" target="_blank" class="link-tag">🔗 ホテル公式サイト</a>
+                            <a href="https://maps.app.goo.gl/QTGe6kcGPrrxh8iM6" target="_blank" class="link-tag">📍 地図を見る</a>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <span class="event-time">20:00</span>
+                        <div class="event-title">Times Square 散策</div>
+                        <div class="event-desc">徒歩圏内。夜景を楽しむ。夕食はShake Shack等で軽めに。</div>
+                        <div class="event-links">
+                            <a href="https://www.timessquarenyc.org/" target="_blank" class="link-tag">🔗 観光ガイド</a>
+                            <a href="#" class="link-tag">🍽️ Shake Shack 8th Ave</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="day-header">Day 2: 2/5 (木) 自由の女神 & ダウンタウン</div>
+                <div class="timeline">
+                    <div class="event">
+                        <span class="event-time">09:00</span>
+                        <div class="event-title">自由の女神 (Crown Access)</div>
+                        <div class="event-desc">バッテリーパークからフェリー。予約画面を提示。</div>
+                        <div class="event-links">
+                            <a href="https://www.statueofliberty.org/" target="_blank" class="link-tag">🔗 公式サイト</a>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <span class="event-time">13:00</span>
+                        <div class="event-title">Wall St / 9.11 Museum</div>
+                        <div class="event-desc">金融街のチャージングブル → メモリアルミュージアム。</div>
+                        <div class="event-links">
+                            <a href="https://www.911memorial.org/" target="_blank" class="link-tag">🔗 9/11 Museum</a>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <span class="event-time">17:00</span>
+                        <div class="event-title">ブルックリンブリッジ</div>
+                        <div class="event-desc">夕暮れ時に徒歩で渡る。写真スポット多数。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="day-header">Day 3: 2/6 (金) ミッドタウン & Wicked</div>
+                <div class="timeline">
+                    <div class="event">
+                        <span class="event-time">AM</span>
+                        <div class="event-title">5番街 & 展望台</div>
+                        <div class="event-desc">ティファニー本店、セントパトリック大聖堂、Top of the Rock。</div>
+                        <div class="event-links">
+                            <a href="https://www.rockefellercenter.com/attractions/top-of-the-rock-observation-deck/" target="_blank" class="link-tag">🔗 Top of the Rock</a>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <span class="event-time">19:00</span>
+                        <div class="event-title">Musical "Wicked"</div>
+                        <div class="event-desc">ガーシュウィン劇場 (Gershwin Theatre)。開演30分前集合。</div>
+                        <div class="event-links">
+                            <a href="https://wickedthemusical.com/" target="_blank" class="link-tag">🔗 Wicked公式</a>
+                            <a href="https://goo.gl/maps/placeholder" target="_blank" class="link-tag">📍 劇場マップ</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -167,8 +286,7 @@
                 <h2>✈️ フライト情報</h2>
                 <div class="ticket">
                     <div class="ticket-top">
-                        <span>往路: 2/4 (水)</span>
-                        <span>AA168</span>
+                        <span>往路: 2/4 (水)</span> <span>AA168</span>
                     </div>
                     <div class="ticket-main">
                         <span class="airport">HND</span> ✈ <span class="airport">JFK</span>
@@ -177,8 +295,7 @@
                 </div>
                 <div class="ticket">
                     <div class="ticket-top">
-                        <span>復路: 2/8 (日)</span>
-                        <span>AA167</span>
+                        <span>復路: 2/8 (日)</span> <span>AA167</span>
                     </div>
                     <div class="ticket-main">
                         <span class="airport">JFK</span> ✈ <span class="airport">HND</span>
@@ -200,8 +317,8 @@
                             <li><strong>例:</strong> ポーチ、ハンドバッグ、リュック等。</li>
                         </ul>
                         <div class="exception-box">
-                            <strong>※カウントされないもの（追加で持込可）</strong><br>
-                            おむつ用バッグ（子供1人につき1個）、搾乳器、母乳用保冷バッグ、チャイルドシート、ベビーカー、医療機器、移動補助具
+                            <strong>※カウントされないもの</strong><br>
+                            おむつ用バッグ、搾乳器、母乳用保冷バッグ、チャイルドシート、ベビーカー、医療機器、移動補助具
                         </div>
                     </div>
 
@@ -209,11 +326,10 @@
                         <div class="rule-title">🎒 2. 機内持ち込み品 (Carry-on)</div>
                         <div class="rule-spec">最大 56 x 36 x 23 cm</div>
                         <ul class="rule-list">
-                            <li><strong>個数:</strong> 身の回り品とは別に <strong>1点のみ</strong>。</li>
+                            <li><strong>個数:</strong> 身の回り品とは別に 1点のみ。</li>
                             <li><strong>要件:</strong> 頭上収納棚 または 前の座席下に収まること。</li>
                             <li><strong>重要:</strong> お預け入れの可能性に備え、<span style="color:red;font-weight:bold;">名前・住所・電話番号を明記</span>してください。</li>
-                            <li><strong>ガーメントバッグ:</strong> 3辺の和 130cm以内 (やわらかい材質のもの)</li>
-                            <li><strong>楽器:</strong> 収納棚か座席下に収まるなら可。</li>
+                            <li><strong>ガーメントバッグ:</strong> 3辺の和 130cm以内 (やわらかい材質)</li>
                         </ul>
                         <div class="exception-box" style="background:#e3f2fd; color:#0d47a1; border-color:#90caf9;">
                              <strong>✅ ここに入れるもの</strong><br>モバイルバッテリー、PC、カメラ、現金、貴重品
@@ -225,7 +341,7 @@
                         <div class="rule-spec">3辺の和 158cm / 23kgまで</div>
                         <ul class="rule-list">
                             <li><strong>重量:</strong> 23kg (50ポンド) まで</li>
-                            <li><strong>サイズ:</strong> 3辺（縦+横+高さ）の合計が158cm以内</li>
+                            <li><strong>サイズ:</strong> 3辺合計 158cm以内</li>
                             <li><strong>料金:</strong> 1個目無料 / 2個目有料</li>
                         </ul>
                         <p style="margin-top:10px; font-size:0.9rem;">
@@ -255,6 +371,9 @@
             <div class="card">
                 <h2>Romer Hell's Kitchen</h2>
                 <p>📍 851 8th Ave, New York, NY 10019</p>
+                <p style="margin-top:10px;">
+                    <a href="https://maps.app.goo.gl/QTGe6kcGPrrxh8iM6" target="_blank" class="link-tag" style="font-size:1rem; padding:10px 20px;">📍 Googleマップで開く</a>
+                </p>
                 <hr>
                 <p><strong>IN:</strong> 2/4 16:00<br><strong>OUT:</strong> 2/8 11:00</p>
                 <p>確認コード: 42184SF108662</p>
@@ -264,7 +383,7 @@
         <section id="map" class="section">
             <div class="card">
                 <h2>🗺️ MAP</h2>
-                <iframe src="https://developers.google.com/maps/documentation/embed/embedding-map?hl=ja1" width="100%" height="400" style="border:0; border-radius:8px;"></iframe>
+                <iframe src="https://developers.google.com/maps/documentation/embed/embedding-map?hl=ja3" width="100%" height="400" style="border:0; border-radius:8px;"></iframe>
             </div>
         </section>
     </div>
@@ -272,7 +391,6 @@
     <script>
         const MY_PASSWORD = "2026NYC";
 
-        // パスワードチェック
         function checkPassword() {
             const input = document.getElementById('password-input').value;
             if (input === MY_PASSWORD) {
@@ -285,24 +403,24 @@
             }
         }
 
-        // タブ切り替え（バナーをクリックしたときの動作）
         function showSection(sectionId, element) {
-            // 1. 全てのセクションを隠す
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            // 2. 選択されたセクションを表示
             document.getElementById(sectionId).classList.add('active');
             
-            // 3. バナーの見た目を更新
             document.querySelectorAll('.nav-card').forEach(card => card.classList.remove('active'));
-            element.classList.add('active');
+            if(element) element.classList.add('active');
 
-            // 4. ボディにクラスをつけてヘッダーを小さくする（オプション）
             document.body.classList.add('content-active');
-
-            // 5. スクロール調整（少し下に移動）
-            const headerHeight = document.getElementById('hero-header').offsetHeight;
-            window.scrollTo({ top: 300, behavior: 'smooth' });
+            
+            // バナーの下までスクロール
+            const offset = document.getElementById('hero-header').offsetHeight - 50; 
+            window.scrollTo({ top: offset, behavior: 'smooth' });
         }
+
+        // 更新履歴制御
+        function openNews() { document.getElementById('news-modal').style.display = 'flex'; }
+        function closeNewsBtn() { document.getElementById('news-modal').style.display = 'none'; }
+        function closeNews(e) { if (e.target.id === 'news-modal') document.getElementById('news-modal').style.display = 'none'; }
     </script>
 </body>
 </html>

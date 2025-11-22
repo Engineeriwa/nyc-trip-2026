@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Trip 2026</title>
+    <style>
+        /* デザイン設定 */
+        :root { --primary: #003366; --accent: #d9534f; --bg: #f4f4f4; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 0; background: var(--bg); color: #333; }
+        
+        /* ログイン画面のデザイン */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary); color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        #login-screen input { padding: 10px; font-size: 16px; border-radius: 5px; border: none; margin-bottom: 10px; }
+        #login-screen button { padding: 10px 20px; font-size: 16px; background: var(--accent); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        #main-content { display: none; } /* 最初は隠しておく */
+
+        /* ヘッダーとナビゲーション */
+        header { background: var(--primary); color: white; padding: 15px; text-align: center; }
+        nav { display: flex; overflow-x: auto; background: #fff; border-bottom: 1px solid #ddd; position: sticky; top: 0; }
+        nav button { flex: 0 0 auto; padding: 15px 20px; border: none; background: none; font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent; }
+        nav button.active { border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: bold; }
+
+        /* コンテンツエリア */
+        .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 各パーツのデザイン */
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); font-size: 1.2rem; margin-top: 0; }
+        .timeline-item { border-left: 3px solid var(--accent); padding-left: 15px; margin-bottom: 20px; }
+        .time { font-weight: bold; color: #555; display: inline-block; width: 60px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #eee; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .photo-placeholder { background: #ddd; height: 150px; display: flex; align-items: center; justify-content: center; color: #777; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <h1>🔒 SECRET TRIP LOG</h1>
+        <p>パスワードを入力してください</p>
+        <input type="password" id="password-input" placeholder="Password">
+        <button onclick="checkPassword()">Enter</button>
+        <p id="error-msg" style="color: #ffcccc; display: none;">パスワードが違います</p>
+    </div>
+
+    <div id="main-content">
+        <header>
+            <h1>🗽 NYC Trip 2026</h1>
+            <p>2026/2/4 - 2/8</p>
+        </header>
+
+        <nav>
+            <button onclick="showSection('schedule')" class="active">📅 行程</button>
+            <button onclick="showSection('flight')">✈️ フライト</button>
+            <button onclick="showSection('hotel')">🏨 ホテル</button>
+            <button onclick="showSection('budget')">💰 予算</button>
+            <button onclick="showSection('map')">🗺️ マップ</button>
+            <button onclick="showSection('photos')">📷 写真</button>
+        </nav>
+
+        <section id="schedule" class="section active">
+            <div class="card">
+                <h2>Day 1: 2/4 (水) 到着</h2>
+                <div class="timeline-item">
+                    <span class="time">16:00</span> JFK到着 (AA168)<br>
+                    入国審査後、Uber/タクシーでホテルへ
+                </div>
+                <div class="timeline-item">
+                    <span class="time">19:00</span> Times Square 散策<br>
+                    夕食：近くのダイナーかShake Shack
+                </div>
+            </div>
+            <div class="card">
+                <h2>Day 2: 2/5 (木) 自由の女神</h2>
+                <div class="timeline-item"><span class="time">AM</span> 自由の女神（クラウン）</div>
+                <div class="timeline-item"><span class="time">PM</span> Wall St / 9.11 Museum / Brooklyn Bridge</div>
+            </div>
+            <div class="card">
+                <h2>Day 3: 2/6 (金) ミッドタウン</h2>
+                <div class="timeline-item"><span class="time">AM</span> 5番街 / Tiffany / St. Patrick's</div>
+                <div class="timeline-item"><span class="time">PM</span> Top of the Rock 展望台</div>
+                <div class="timeline-item"><span class="time">Night</span> ミュージカル「Wicked」</div>
+            </div>
+            <div class="card">
+                <h2>Day 4: 2/7 (土) 美術館 & NBA</h2>
+                <div class="timeline-item"><span class="time">AM</span> Central Park / 自然史博物館</div>
+                <div class="timeline-item"><span class="time">PM</span> The MET (メトロポリタン美術館)</div>
+                <div class="timeline-item"><span class="time">Night</span> NBA観戦 @Barclays Center</div>
+            </div>
+             <div class="card">
+                <h2>Day 5: 2/8 (日) 帰国</h2>
+                <div class="timeline-item"><span class="time">10:00</span> JFK発 (AA167)</div>
+            </div>
+        </section>
+
+        <section id="flight" class="section">
+            <div class="card">
+                <h2>🛫 行き (JAL/AA)</h2>
+                <p><strong>便名:</strong> AA168 (JAL共同運航)</p>
+                <p>羽田発: 2/4 --:--</p>
+                <p>JFK着: 2/4 16:00</p>
+            </div>
+            <div class="card">
+                <h2>🛬 帰り (JAL/AA)</h2>
+                <p><strong>便名:</strong> AA167 (JAL共同運航)</p>
+                <p>JFK発: 2/8 10:00</p>
+                <p>羽田着: 翌日午後</p>
+            </div>
+        </section>
+
+        <section id="hotel" class="section">
+            <div class="card">
+                <h2>Romer Hell's Kitchen</h2>
+                [cite_start]<p>📍 851 8th Ave, New York, NY 10019 [cite: 413, 430]</p>
+                [cite_start]<p><strong>Check-in:</strong> 2/4 16:00 [cite: 418]</p>
+                [cite_start]<p><strong>Check-out:</strong> 2/8 11:00 [cite: 427]</p>
+                [cite_start]<p><strong>部屋:</strong> デラックスルーム (Queen x2) [cite: 432]</p>
+                <p><a href="https://maps.google.com/?q=Romer+Hells+Kitchen" target="_blank">Googleマップで見る</a></p>
+            </div>
+        </section>
+
+        <section id="budget" class="section">
+            <div class="card">
+                <h2>💸 概算予算リスト</h2>
+                <table>
+                    <tr><th>項目</th><th>予算</th><th>実績</th></tr>
+                    <tr><td>航空券</td><td>¥---</td><td>¥---</td></tr>
+                    <tr><td>ホテル (現地払)</td><td>$782.35</td><td>---</td></tr>
+                    <tr><td>Wicked チケット</td><td>$---</td><td>---</td></tr>
+                    <tr><td>NBA チケット</td><td>$---</td><td>---</td></tr>
+                    <tr><td>食費・雑費</td><td>$---</td><td>---</td></tr>
+                    <tr><td><strong>合計</strong></td><td><strong>---</strong></td><td><strong>---</strong></td></tr>
+                </table>
+                [cite_start]<p><small>※ホテル現地払い額は $782.35 (約11.7万円) の予定 [cite: 466]</small></p>
+            </div>
+        </section>
+
+        <section id="map" class="section">
+            <div class="card">
+                <h2>🗺️ 行きたい場所マップ</h2>
+                <p>Googleマイマップで作成した地図をここに表示します。</p>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968459391!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sja!2sjp!4v1633658744000!5m2!1sja!2sjp" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+        
+        <section id="photos" class="section">
+            <div class="card">
+                <h2>📷 思い出アルバム</h2>
+                <p>Gitに写真をアップロードしてここに並べられます。</p>
+                <div class="photo-grid">
+                    <div class="photo-placeholder">写真1</div>
+                    <div class="photo-placeholder">写真2</div>
+                    <div class="photo-placeholder">写真3</div>
+                    </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 1. パスワード機能
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            // ★ここでパスワードを設定（現在は 2026NYC です）
+            if (input === "2026NYC") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // 2. タブ切り替え機能
+        function showSection(sectionId) {
+            // すべてのセクションを隠す
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+            
+            // 選ばれたセクションだけ表示
+            document.getElementById(sectionId).classList.add('active');
+            
+            // ボタンの色を変える（簡易的な実装）
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

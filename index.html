@@ -3,374 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYC Trip 2026</title>
+    <title>NYC Family Trip 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* --- 基本設定 --- */
         :root {
             --primary: #003366; /* JAL/AA Navy */
-            --accent: #d9534f;  /* Accent Red */
-            --bg: #f0f2f5;
+            --accent: #D32F2F;  /* Deep Red */
             --text: #333;
-            --flight-bg: #e3f2fd; /* Flight Tab Background */
+            --bg: #f8f9fa;
         }
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
         * { box-sizing: border-box; }
+        body { 
+            font-family: "Noto Sans JP", sans-serif; 
+            margin: 0; padding: 0; 
+            background: var(--bg); color: var(--text); 
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* --- 🔒 ログイン画面 --- */
+        /* --- 1. 🔒 ログイン画面 --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--primary); color: white;
+            background: #111; color: white;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 3000;
+            z-index: 9999; transition: opacity 0.5s;
         }
-        #login-screen h1 { margin-bottom: 20px; font-size: 2rem; }
-        #login-screen input { padding: 12px; font-size: 16px; border-radius: 8px; border: none; margin-bottom: 15px; width: 200px; text-align: center; }
-        #login-screen button { padding: 12px 30px; font-size: 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
-        #login-screen button:active { opacity: 0.8; }
+        #login-screen h1 { font-family: 'Montserrat', sans-serif; letter-spacing: 2px; margin-bottom: 20px; }
+        #login-screen input { 
+            padding: 12px; font-size: 16px; border-radius: 30px; border: 1px solid #444; 
+            background: #222; color: #fff; text-align: center; width: 200px; outline: none;
+        }
+        #login-screen button {
+            margin-top: 15px; padding: 10px 30px; border-radius: 30px; border: none;
+            background: #fff; color: #000; font-weight: bold; cursor: pointer;
+        }
 
-        /* --- メインレイアウト --- */
+        /* --- 2. 🗽 トップページ (メインビジュアル) --- */
+        #hero-screen {
+            display: none; /* ログイン後に表示 */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* ニューヨークの画像（プレースホルダー） */
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1496442226666-8d4a0e94388b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover no-repeat;
+            z-index: 5000;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
+            padding: 20px;
+        }
+        .hero-title {
+            font-family: 'Montserrat', sans-serif; font-size: 3rem; font-weight: 900; 
+            line-height: 1.1; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .hero-subtitle {
+            font-size: 1.2rem; font-weight: 500; margin-bottom: 40px; opacity: 0.9;
+            letter-spacing: 1px;
+        }
+        .enter-btn {
+            padding: 15px 40px; font-size: 1.1rem; background: var(--accent); color: white;
+            border: none; border-radius: 50px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); transition: transform 0.2s;
+        }
+        .enter-btn:active { transform: scale(0.95); }
+
+        /* --- 3. メインコンテンツ (詳細情報) --- */
         #main-content { display: none; padding-bottom: 80px; }
         
         /* ヘッダー */
-        header {
-            background: var(--primary); color: white; padding: 20px 15px; text-align: center; position: relative;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        header h1 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
-        header p { margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem; }
+        header { background: #fff; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+        header h1 { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 0; color: var(--primary); font-weight: 800; }
         
-        /* 更新履歴ボタン */
-        .news-btn {
-            position: absolute; top: 20px; right: 15px;
-            background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4);
-            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 5px;
-        }
-        .news-btn:hover { background: rgba(255,255,255,0.3); }
-
-        /* タブナビゲーション（下部固定も可だが今回は上部見やすく） */
-        nav {
-            display: flex; overflow-x: auto; background: #fff; position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); -webkit-overflow-scrolling: touch;
+        /* ナビゲーションタブ */
+        nav { 
+            display: flex; overflow-x: auto; background: #fff; border-bottom: 1px solid #eee; 
+            -webkit-overflow-scrolling: touch; 
         }
         nav button {
-            flex: 0 0 auto; padding: 15px 20px; border: none; background: none; font-size: 0.9rem; color: #666;
-            cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; font-weight: bold;
+            flex: 0 0 auto; padding: 12px 18px; border: none; background: none; 
+            font-size: 0.9rem; color: #777; font-weight: bold; cursor: pointer;
+            border-bottom: 3px solid transparent; transition: all 0.3s;
         }
-        nav button.active { border-bottom: 3px solid var(--primary); color: var(--primary); background: #f9fbff; }
+        nav button.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        /* --- コンテンツエリア --- */
-        .section { display: none; padding: 20px 15px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.4s ease; }
+        /* コンテンツエリア */
+        .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; animation: fadeUp 0.5s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* カード共通デザイン */
-        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
-        h2 { border-left: 5px solid var(--primary); padding-left: 15px; color: var(--primary); font-size: 1.3rem; margin: 0 0 20px 0; }
-        
-        /* ✈️ フライトチケット風デザイン */
-        .ticket {
-            border: 2px solid #e0e0e0; border-radius: 12px; overflow: hidden; margin-bottom: 25px;
-            background: #fff; position: relative;
-        }
-        .ticket-header {
-            background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .ticket-header .airline { font-weight: bold; font-size: 1.1rem; }
-        .ticket-header .flight-no { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px; font-size: 0.9rem; }
-        .ticket-body { padding: 20px; }
-        .route { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .airport { text-align: center; width: 30%; }
-        .airport .code { font-size: 2rem; font-weight: 800; color: #333; display: block; line-height: 1; }
-        .airport .city { font-size: 0.85rem; color: #666; }
-        .plane-icon { color: #ccc; font-size: 1.5rem; transform: rotate(90deg); }
-        .time-info { display: flex; justify-content: space-between; border-top: 1px dashed #ccc; padding-top: 15px; }
-        .time-group { width: 45%; }
-        .time-label { font-size: 0.75rem; color: #888; text-transform: uppercase; display: block; }
-        .time-val { font-size: 1.1rem; font-weight: bold; color: var(--primary); }
-        
-        /* 🧳 荷物ルールボックス */
-        .baggage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .baggage-item { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
-        .baggage-title { font-weight: bold; display: block; margin-bottom: 8px; color: #444; font-size: 0.95rem; }
-        .baggage-detail { font-size: 0.85rem; color: #666; }
-        .status-ok { color: #28a745; font-weight: bold; }
-        .status-ng { color: #dc3545; font-weight: bold; }
-        
-        /* 💰 予算テーブル */
-        .budget-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-        .budget-table th { background: #f1f3f5; padding: 12px; text-align: left; color: #555; font-weight: 600; border-bottom: 2px solid #ddd; }
-        .budget-table td { padding: 12px; border-bottom: 1px solid #eee; }
-        .price { text-align: right; font-family: "Menlo", monospace; font-weight: bold; color: #333; }
-        .total-row td { background: #f8fff9; border-top: 2px solid #28a745; color: #28a745; font-size: 1.1rem; }
-        
-        /* 📅 行程タイムライン */
-        .timeline { position: relative; padding-left: 20px; }
-        .timeline::before { content: ''; position: absolute; left: 0; top: 5px; bottom: 0; width: 3px; background: #e0e0e0; border-radius: 3px; }
-        .event { margin-bottom: 25px; position: relative; }
-        .event::after { content: ''; position: absolute; left: -24px; top: 5px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .event-time { font-weight: 800; color: var(--accent); font-size: 0.9rem; margin-bottom: 4px; display: inline-block; }
-        .event-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 5px; color: #222; }
-        .event-desc { font-size: 0.9rem; color: #666; background: #f9f9f9; padding: 10px; border-radius: 6px; }
+        .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h2 { font-size: 1.3rem; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
+        h3 { font-size: 1.1rem; color: #444; margin: 20px 0 10px; border-left: 4px solid var(--accent); padding-left: 10px; }
 
-        /* 📢 ポップアップ（更新履歴） */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 2500; align-items: center; justify-content: center; backdrop-filter: blur(2px);
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 500px; border-radius: 16px; padding: 25px;
-            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;
-        }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; line-height: 1; }
-        .news-item { padding: 12px 0; border-bottom: 1px solid #eee; }
-        .news-date { display: inline-block; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
+        /* --- ✈️ フライト詳細デザイン --- */
+        .flight-card { border: 1px solid #ddd; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .flight-header { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .flight-body { padding: 20px; }
+        .flight-route { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .airport-code { font-size: 2.2rem; font-weight: 800; font-family: 'Montserrat', sans-serif; line-height: 1; }
+        .airport-name { font-size: 0.8rem; color: #666; display: block; }
+        .plane-icon { font-size: 1.5rem; color: #ccc; transform: rotate(90deg); }
+        
+        /* タイムライン */
+        .flight-timeline { position: relative; border-left: 2px solid #eee; margin-left: 10px; padding-left: 20px; margin-top: 10px; }
+        .timeline-point { position: relative; margin-bottom: 25px; }
+        .timeline-point::before { content: ''; position: absolute; left: -27px; top: 5px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 2px solid #fff; }
+        .time-label { font-weight: bold; color: var(--primary); font-family: 'Montserrat', sans-serif; }
+        .event-text { font-size: 0.95rem; margin-top: 3px; line-height: 1.5; }
+        .note { font-size: 0.85rem; color: #666; background: #f5f5f5; padding: 8px; border-radius: 5px; margin-top: 5px; }
 
-        /* レスポンシブ調整 */
+        /* 🧳 荷物詳細 */
+        .baggage-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .baggage-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+        .baggage-head { font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; font-size: 1rem; }
+        .rules-list { list-style: none; padding: 0; font-size: 0.9rem; margin: 0; }
+        .rules-list li { margin-bottom: 8px; padding-left: 15px; position: relative; }
+        .rules-list li::before { content: '•'; position: absolute; left: 0; color: #ccc; }
+        .highlight { color: var(--accent); font-weight: bold; }
+        
+        /* 予算テーブル */
+        .budget-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        .budget-table th, .budget-table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .budget-table th { text-align: left; color: #666; font-size: 0.85rem; }
+        .price-col { text-align: right; font-family: 'Montserrat', sans-serif; font-weight: bold; }
+
+        /* レスポンシブ */
         @media (max-width: 600px) {
-            .baggage-grid { grid-template-columns: 1fr; }
-            nav button { padding: 15px 12px; font-size: 0.85rem; }
-            .airport .code { font-size: 1.8rem; }
+            .hero-title { font-size: 2.5rem; }
+            .baggage-section { grid-template-columns: 1fr; }
+            .airport-code { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <h1>🔒 NYC TRIP</h1>
-        <p style="margin-bottom: 20px; opacity: 0.8;">Family Access Only</p>
-        <input type="password" id="password-input" placeholder="Enter Password">
-        <button onclick="checkPassword()">LOGIN</button>
-        <p id="error-msg" style="color: #ffabab; display: none; margin-top: 15px; font-weight: bold;">パスワードが違います</p>
+        <h1>NYC TRIP</h1>
+        <input type="password" id="password-input" placeholder="PASSWORD">
+        <button onclick="checkPassword()">ENTER</button>
+        <p id="error-msg" style="color: #ff5252; display: none; margin-top: 15px; font-size: 0.9rem;">パスワードが違います</p>
     </div>
 
-    <div id="news-modal" class="modal-overlay" onclick="closeNews(event)">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeNewsBtn()">×</span>
-            <h3 style="margin-top:0; color:var(--primary);">🔔 更新履歴 (What's New)</h3>
-            <div class="news-item">
-                <span class="news-date">2025.11.22</span>
-                <div><strong>フライト情報更新:</strong> チケット風デザインに変更し、荷物ルール詳細を統合しました。</div>
-            </div>
-            <div class="news-item">
-                <span class="news-date">2025.11.22</span>
-                <div><strong>予算ページ追加:</strong> 現地での概算費用リストを追加しました。</div>
-            </div>
-            <div class="news-item">
-                <span class="news-date">2025.11.22</span>
-                <div><strong>サイト開設:</strong> 行程表、ホテル情報を掲載。パスワード保護機能実装。</div>
-            </div>
-        </div>
+    <div id="hero-screen">
+        <div class="hero-title">NEW YORK<br>CITY 2026</div>
+        <div class="hero-subtitle">Family Trip | Feb 4 - Feb 8</div>
+        <button class="enter-btn" onclick="enterSite()">旅のしおりを開く</button>
     </div>
 
     <div id="main-content">
         <header>
-            <h1>🗽 NYC Family Trip 2026</h1>
-            <p>Feb 4 (Wed) - Feb 8 (Sun)</p>
-            <button class="news-btn" onclick="openNews()">🔔 更新履歴</button>
+            <h1>🗽 NYC 2026</h1>
+            <div style="font-size:0.8rem; color:#666;">あとXX日</div>
         </header>
 
         <nav>
-            <button onclick="showSection('schedule')" class="active">📅 行程</button>
-            <button onclick="showSection('flight')">✈️ フライト</button>
-            <button onclick="showSection('budget')">💰 予算</button>
-            <button onclick="showSection('hotel')">🏨 ホテル</button>
-            <button onclick="showSection('map')">🗺️ マップ</button>
+            <button onclick="showSection('schedule')" class="active">行程表</button>
+            <button onclick="showSection('flight')">フライト詳細</button>
+            <button onclick="showSection('budget')">予算</button>
+            <button onclick="showSection('hotel')">ホテル</button>
+            <button onclick="showSection('map')">Map</button>
         </nav>
 
         <section id="schedule" class="section active">
             <div class="card">
-                <h2>Day 1: 2/4 (水) 到着 & タイムズスクエア</h2>
-                <div class="timeline">
-                    <div class="event">
-                        <span class="event-time">16:25</span>
-                        <div class="event-title">JFK空港 到着 (AA168)</div>
-                        <div class="event-desc">入国審査(約60分) → Uber/タクシーでホテルへ移動。</div>
+                <h2>📅 簡易スケジュール</h2>
+                <div class="flight-timeline">
+                    <div class="timeline-point">
+                        <div class="time-label">2/4 (水)</div>
+                        <div class="event-text"><strong>✈️ 出発 & NY到着</strong><br>夕方：ホテル着 → タイムズスクエアへ</div>
                     </div>
-                    <div class="event">
-                        <span class="event-time">19:00</span>
-                        <div class="event-title">ホテルチェックイン</div>
-                        <div class="event-desc"><strong>Romer Hell's Kitchen</strong><br>荷物を置いて一休み。</div>
+                    <div class="timeline-point">
+                        <div class="time-label">2/5 (木)</div>
+                        <div class="event-text"><strong>🗽 自由の女神 & ダウンタウン</strong><br>クラウン入場 → ウォール街 → ブルックリン橋</div>
                     </div>
-                    <div class="event">
-                        <span class="event-time">20:00</span>
-                        <div class="event-title">Times Square 散策</div>
-                        <div class="event-desc">徒歩圏内。これぞNYな夜景を楽しむ。夕食はShake Shack等で軽めに。</div>
+                    <div class="timeline-point">
+                        <div class="time-label">2/6 (金)</div>
+                        <div class="event-text"><strong>🏙️ ミッドタウン & Wicked</strong><br>5番街 → Top of the Rock → ミュージカル鑑賞</div>
                     </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Day 2: 2/5 (木) 自由の女神 & 金融街</h2>
-                <div class="timeline">
-                    <div class="event">
-                        <span class="event-time">09:00</span>
-                        <div class="event-title">自由の女神 (Crown Access)</div>
-                        <div class="event-desc">バッテリーパークからフェリー。予約済みチケット提示。</div>
+                    <div class="timeline-point">
+                        <div class="time-label">2/7 (土)</div>
+                        <div class="event-text"><strong>🎨 アート & NBA</strong><br>MET美術館 → セントラルパーク → Nets試合観戦</div>
                     </div>
-                    <div class="event">
-                        <span class="event-time">13:00</span>
-                        <div class="event-title">Wall St / 9.11 Museum</div>
-                        <div class="event-desc">チャージングブル、NYSE、メモリアルミュージアム見学。</div>
-                    </div>
-                    <div class="event">
-                        <span class="event-time">17:00</span>
-                        <div class="event-title">ブルックリンブリッジ散策</div>
-                        <div class="event-desc">夕暮れ時のマンハッタンを眺めながら徒歩で渡る。</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Day 3: 2/6 (金) ミッドタウン & Wicked</h2>
-                <div class="timeline">
-                    <div class="event">
-                        <span class="event-time">AM</span>
-                        <div class="event-title">5番街 / セントパトリック大聖堂</div>
-                        <div class="event-desc">ティファニー本店などウィンドウショッピング。</div>
-                    </div>
-                    <div class="event">
-                        <span class="event-time">15:00</span>
-                        <div class="event-title">Top of the Rock 展望台</div>
-                        <div class="event-desc">ロックフェラーセンターからの絶景。</div>
-                    </div>
-                    <div class="event">
-                        <span class="event-time">19:00</span>
-                        <div class="event-title">Musical "Wicked"</div>
-                        <div class="event-desc">ガーシュウィン劇場にて。開演30分前には到着すること。</div>
-                    </div>
-                </div>
-            </div>
-             <div class="card">
-                <h2>Day 4: 2/7 (土) アート & NBA</h2>
-                <div class="timeline">
-                     <div class="event">
-                        <span class="event-time">AM</span>
-                        <div class="event-title">Central Park & 自然史博物館</div>
-                        <div class="event-desc">朝の公園散歩と恐竜展示。</div>
-                    </div>
-                    <div class="event">
-                        <span class="event-time">PM</span>
-                        <div class="event-title">THE MET (メトロポリタン美術館)</div>
-                        <div class="event-desc">広大なので見たいエリアを絞って回る。</div>
-                    </div>
-                    <div class="event">
-                        <span class="event-time">Night</span>
-                        <div class="event-title">NBA観戦 (Nets)</div>
-                        <div class="event-desc">Barclays Centerにて。</div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <h2>Day 5: 2/8 (日) 帰国</h2>
-                <div class="timeline">
-                    <div class="event">
-                        <span class="event-time">07:00</span>
-                        <div class="event-title">チェックアウト・移動</div>
-                        <div class="event-desc">JFK空港へ。ラッシュはないが余裕を持って。</div>
-                    </div>
-                     <div class="event">
-                        <span class="event-time">10:00</span>
-                        <div class="event-title">JFK出発 (AA167)</div>
+                    <div class="timeline-point">
+                        <div class="time-label">2/8 (日)</div>
+                        <div class="event-text"><strong>✈️ 帰国</strong><br>午前便でJFK出発</div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="flight" class="section">
-            <div class="ticket">
-                <div class="ticket-header">
-                    <span class="airline">American Airlines (JAL Code)</span>
-                    <span class="flight-no">AA168</span>
+            
+            <div class="flight-card">
+                <div class="flight-header">
+                    <span>🛫 往路: 2/4 (水)</span>
+                    <span style="font-weight:bold;">AA168</span>
                 </div>
-                <div class="ticket-body">
-                    <div class="route">
-                        <div class="airport">
-                            <span class="code">HND</span>
-                            <span class="city">TOKYO</span>
+                <div class="flight-body">
+                    <div class="flight-route">
+                        <div style="text-align:center">
+                            <span class="airport-code">HND</span>
+                            <span class="airport-name">東京 (羽田) T3</span>
                         </div>
                         <div class="plane-icon">✈</div>
-                        <div class="airport">
-                            <span class="code">JFK</span>
-                            <span class="city">NEW YORK</span>
+                        <div style="text-align:center">
+                            <span class="airport-code">JFK</span>
+                            <span class="airport-name">NY (ケネディ) T8</span>
                         </div>
                     </div>
-                    <div class="time-info">
-                        <div class="time-group">
-                            <span class="time-label">Departure</span>
-                            <div class="time-val">2/4 (Wed) 17:10</div>
+                    
+                    <div class="flight-timeline">
+                        <div class="timeline-point">
+                            <div class="time-label">14:30 (目安)</div>
+                            <div class="event-text"><strong>羽田空港 第3ターミナル到着</strong></div>
+                            <div class="note">アメリカン航空カウンター(JALと共通の場合あり)でチェックイン＆荷物預け。</div>
                         </div>
-                        <div class="time-group" style="text-align: right;">
-                            <span class="time-label">Arrival</span>
-                            <div class="time-val">2/4 (Wed) 16:25</div>
+                        <div class="timeline-point">
+                            <div class="time-label">15:30</div>
+                            <div class="event-text"><strong>保安検査 & 出国審査</strong></div>
+                            <div class="note">PC、タブレットはカバンから出す。ペットボトルは捨てる。</div>
+                        </div>
+                        <div class="timeline-point">
+                            <div class="time-label">17:10</div>
+                            <div class="event-text"><strong>離陸 (Take off)</strong></div>
+                            <div class="note">所要時間: 約13時間15分 (機内食2回 + 軽食)</div>
+                        </div>
+                        <div class="timeline-point">
+                            <div class="time-label">16:25 (現地時間)</div>
+                            <div class="event-text"><strong>JFK空港 到着</strong></div>
+                            <div class="note">入国審査 (Immigration) → 荷物受取 (Baggage Claim) → 税関。</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="ticket">
-                <div class="ticket-header">
-                    <span class="airline">American Airlines</span>
-                    <span class="flight-no">AA167</span>
+            <div class="flight-card">
+                <div class="flight-header">
+                    <span>🛬 復路: 2/8 (日)</span>
+                    <span style="font-weight:bold;">AA167</span>
                 </div>
-                <div class="ticket-body">
-                    <div class="route">
-                        <div class="airport">
-                            <span class="code">JFK</span>
-                            <span class="city">NEW YORK</span>
+                <div class="flight-body">
+                    <div class="flight-route">
+                        <div style="text-align:center">
+                            <span class="airport-code">JFK</span>
+                            <span class="airport-name">NY (ケネディ)</span>
                         </div>
                         <div class="plane-icon">✈</div>
-                        <div class="airport">
-                            <span class="code">HND</span>
-                            <span class="city">TOKYO</span>
+                        <div style="text-align:center">
+                            <span class="airport-code">HND</span>
+                            <span class="airport-name">東京 (羽田)</span>
                         </div>
                     </div>
-                    <div class="time-info">
-                        <div class="time-group">
-                            <span class="time-label">Departure</span>
-                            <div class="time-val">2/8 (Sun) 10:00</div>
+                    <div class="flight-timeline">
+                        <div class="timeline-point">
+                            <div class="time-label">07:00</div>
+                            <div class="event-text"><strong>ホテル チェックアウト</strong></div>
                         </div>
-                        <div class="time-group" style="text-align: right;">
-                            <span class="time-label">Arrival</span>
-                            <div class="time-val">2/9 (Mon) 14:35</div>
+                        <div class="timeline-point">
+                            <div class="time-label">10:00</div>
+                            <div class="event-text"><strong>JFK 出発</strong></div>
+                            <div class="note">予約番号: <strong>YXRIOJ</strong></div>
                         </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 15px; background: #f0f0f0; padding: 5px; border-radius: 4px; font-size: 0.9rem;">
-                        予約番号: <strong>YXRIOJ</strong>
+                        <div class="timeline-point">
+                            <div class="time-label">14:35 (+1日)</div>
+                            <div class="event-text"><strong>羽田 到着</strong></div>
+                            <div class="note">※到着は2/9(月)の午後になります。</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h2>🧳 手荷物ルール (Baggage Info)</h2>
-                <p style="font-size:0.9rem; color:#666;">※エコノミークラス基準</p>
+                <h2>🧳 荷物ルール (American Airlines)</h2>
+                <p style="margin-bottom:15px; font-size:0.9rem;">※ルールを守らないと追加料金が発生したり、没収される可能性があります。</p>
                 
-                <div class="baggage-grid">
-                    <div class="baggage-item">
-                        <span class="baggage-title">🎒 機内持ち込み (Carry-on)</span>
-                        <div class="baggage-detail">
-                            <strong>個数:</strong> 1個 + 身の回り品1個<br>
-                            <strong>サイズ:</strong> 56 x 36 x 23 cm 以内
+                <div class="baggage-section">
+                    <div class="baggage-box" style="border-top: 3px solid var(--primary);">
+                        <div class="baggage-head">🎒 機内持ち込み (Carry-on)</div>
+                        <ul class="rules-list">
+                            <li><strong>個数:</strong> <span class="highlight">「身の回り品 1個」＋「手荷物 1個」</span>まで。</li>
+                            <li><strong>サイズ:</strong> 56 x 36 x 23 cm 以内 (キャリーケース等)</li>
+                            <li><strong>身の回り品:</strong> 座席の下に入るサイズ (ハンドバッグ、リュック等)</li>
+                        </ul>
+                        <div class="note" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; margin-top:10px;">
+                            <strong>✅ 必ず機内へ持つもの</strong><br>
+                            ・パスポート、財布、現金<br>
+                            ・<span class="highlight">モバイルバッテリー</span> (預け入れ絶対NG)<br>
+                            ・PC、カメラ、高価な時計<br>
+                            ・常備薬
                         </div>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                        <div style="font-size: 0.85rem;">
-                            <span class="status-ok">✅ OK (必須)</span><br>
-                            モバイルバッテリー、貴重品、PC、カメラ<br><br>
-                            <span class="status-ng">⚠️ 注意</span><br>
-                            液体物は100ml以下の容器に入れ、1Lの透明袋へ。
+                         <div class="note" style="background:#fff3e0; color:#e65100; border:1px solid #ffe0b2; margin-top:5px;">
+                            <strong>⚠️ 液体のルール</strong><br>
+                            100ml以下の容器に入れ、<span class="highlight">1リットル以下の透明ジップロック</span>にまとめること。(1人1袋)
                         </div>
                     </div>
 
-                    <div class="baggage-item">
-                        <span class="baggage-title">🧳 預け入れ (Checked Bag)</span>
-                        <div class="baggage-detail">
-                            <strong>重さ:</strong> 23kg (50lbs) まで<br>
-                            <strong>個数:</strong> 1個目無料 / 2個目 $68~<br>
-                            <strong>サイズ:</strong> 3辺の和 158cm以内
-                        </div>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                        <div style="font-size: 0.85rem;">
-                            <span class="status-ng">⛔ 禁止 (機内へ！)</span><br>
-                            モバイルバッテリー、ライター、高価な貴重品
+                    <div class="baggage-box" style="border-top: 3px solid var(--accent);">
+                        <div class="baggage-head">🧳 預け入れ荷物 (Checked Bag)</div>
+                        <ul class="rules-list">
+                            <li><strong>重量:</strong> <span class="highlight">23kg (50lbs)</span> まで</li>
+                            <li><strong>サイズ:</strong> 3辺の和が158cm以内</li>
+                            <li><strong>個数:</strong> 1個目無料 / 2個目は有料 ($68程度)</li>
+                        </ul>
+                        <div class="note" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; margin-top:10px;">
+                            <strong>⛔ 預けてはいけないもの</strong><br>
+                            ・<span class="highlight">モバイルバッテリー (発火の危険)</span><br>
+                            ・電子タバコ、ライター<br>
+                            ・現金、宝石、壊れやすいもの
                         </div>
                     </div>
                 </div>
@@ -379,127 +314,88 @@
 
         <section id="budget" class="section">
             <div class="card">
-                <h2>💰 旅の予算リスト (Estimated Budget)</h2>
-                <p style="font-size:0.9rem; margin-bottom:15px;">現地でかかる費用・支払い済みの確認用リストです。</p>
-                
+                <h2>💰 予算・費用リスト</h2>
                 <table class="budget-table">
-                    <thead>
-                        <tr>
-                            <th>項目 (Item)</th>
-                            <th style="text-align:right;">金額 (Cost)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>航空券 (往復)</strong><br><span style="font-size:0.8rem; color:#666;">羽田⇔JFK (American)</span></td>
-                            <td class="price" style="color:#999;">(支払済)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>ホテル宿泊費</strong><br><span style="font-size:0.8rem; color:#666;">Romer Hell's Kitchen (現地払)</span></td>
-                            <td class="price">$782.35</td>
-                        </tr>
-                        <tr>
-                            <td><strong>ESTA申請</strong><br><span style="font-size:0.8rem; color:#666;">$21 × 3名</span></td>
-                            <td class="price">$63.00</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wicked チケット</strong><br><span style="font-size:0.8rem; color:#666;">3名分 (要確認)</span></td>
-                            <td class="price">$---</td>
-                        </tr>
-                        <tr>
-                            <td><strong>NBA チケット</strong><br><span style="font-size:0.8rem; color:#666;">Barclays Center</span></td>
-                            <td class="price">$---</td>
-                        </tr>
-                        <tr>
-                            <td><strong>食費・交通費・雑費</strong><br><span style="font-size:0.8rem; color:#666;">$100/日 × 4日 × 3名 (概算)</span></td>
-                            <td class="price">$1,200.00</td>
-                        </tr>
-                        <tr>
-                            <td><strong>予備費 (お土産等)</strong></td>
-                            <td class="price">$500.00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>現地支払い合計目安</td>
-                            <td class="price">$2,545.35</td>
-                        </tr>
-                    </tbody>
+                    <tr><th>航空券 (AA/JAL)</th><td class="price-col" style="color:#aaa;">支払済</td></tr>
+                    <tr><th>ホテル (現地払)</th><td class="price-col">$782.35</td></tr>
+                    <tr><th>ESTA申請 (3名)</th><td class="price-col">$63.00</td></tr>
+                    <tr><th>Wicked チケット</th><td class="price-col">未定</td></tr>
+                    <tr><th>NBA チケット</th><td class="price-col">未定</td></tr>
+                    <tr><th>食費・雑費 (概算)</th><td class="price-col">$1,200.00</td></tr>
+                    <tr><th>予備費</th><td class="price-col">$500.00</td></tr>
+                    <tr style="background:#f9fff9; border-top:2px solid #4caf50;">
+                        <th style="color:#2e7d32;">現地必要額 (合計)</th>
+                        <td class="price-col" style="color:#2e7d32; font-size:1.1rem;">$2,545.35</td>
+                    </tr>
                 </table>
-                <p style="text-align: right; font-size: 0.8rem; color: #666; margin-top: 10px;">
-                    ※ $1 = ¥150 換算で 約 381,800円
-                </p>
+                <p style="text-align:right; font-size:0.8rem; margin-top:5px; color:#888;">$1 = ¥150換算で 約38万円</p>
             </div>
         </section>
 
         <section id="hotel" class="section">
             <div class="card">
                 <h2>Romer Hell's Kitchen</h2>
-                <p style="margin-bottom: 5px;"><strong>📍 Address:</strong> 851 8th Ave, New York, NY 10019</p>
-                <p><a href="https://www.google.com/maps/d/embed?\\n...\\nhttps://www.google.com/maps/d/viewer8" target="_blank" style="color:var(--primary); text-decoration:underline;">Googleマップで開く ↗</a></p>
-                
-                <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px;">
-                    <p><strong>Check-in:</strong> 2/4 (Wed) 16:00</p>
-                    <p><strong>Check-out:</strong> 2/8 (Sun) 11:00</p>
-                    <hr>
-                    <p><strong>Room:</strong> Deluxe Room (Queen Beds x2)</p>
-                    <p style="font-size:0.9rem; color:#d9534f;">※到着が深夜0時を過ぎる場合は事前連絡必須</p>
+                <p>📍 851 8th Ave, New York, NY 10019</p>
+                <p><a href="https://goo.gl/maps/placeholder" target="_blank" style="color:var(--primary); text-decoration:underline;">Googleマップで見る</a></p>
+                <div style="background:#f5f5f5; padding:15px; border-radius:8px; margin-top:15px;">
+                    <p><strong>Check-in:</strong> 2/4 16:00</p>
+                    <p><strong>Check-out:</strong> 2/8 11:00</p>
+                    <p><strong>部屋:</strong> Deluxe Room (Queen x2)</p>
+                    <p style="color:var(--accent); font-size:0.9rem;">※到着が深夜になる場合は連絡が必要</p>
                 </div>
-                <div style="margin-top:15px; font-size:0.9rem;">
-                    <strong>確認コード:</strong> 42184SF108662<br>
-                    <strong>旅程番号:</strong> 73254815663866
+                <div style="margin-top:15px; font-size:0.9rem; color:#555;">
+                    確認コード: <strong>42184SF108662</strong>
                 </div>
             </div>
         </section>
 
         <section id="map" class="section">
             <div class="card">
-                <h2>🗺️ 旅のマップ</h2>
-                <p>観光スポット・ホテル・レストランの場所を確認できます。</p>
-                <iframe src="https://www.google.com/maps/d/embed?\\n...\\nhttps://www.google.com/maps/d/viewer9" width="100%" height="450" style="border:0; border-radius:8px;"></iframe>
+                <h2>🗺️ NY Trip Map</h2>
+                <iframe src="https://developers.google.com/maps/documentation/embed/embedding-map?hl=ja0" width="100%" height="450" style="border:0; border-radius:8px;"></iframe>
             </div>
         </section>
+
     </div>
 
     <script>
-        /* --- 設定 --- */
-        const MY_PASSWORD = "2026NYC"; // パスワード
+        const MY_PASSWORD = "2026NYC";
 
-        /* --- パスワード認証 --- */
         function checkPassword() {
             const input = document.getElementById('password-input').value;
-            if (input === MY_PASSWORD) {
+            if(input === MY_PASSWORD) {
+                // ログイン画面を消す
                 document.getElementById('login-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    showSection('schedule'); // 初期表示タブ
-                }, 300);
+                    // トップページ（ヒーロー）を表示
+                    document.getElementById('hero-screen').style.display = 'flex';
+                }, 500);
             } else {
-                const errorMsg = document.getElementById('error-msg');
-                errorMsg.style.display = 'block';
-                errorMsg.classList.add('shake');
+                document.getElementById('error-msg').style.display = 'block';
             }
         }
 
-        /* --- タブ切り替え --- */
-        function showSection(sectionId) {
-            // 全セクション・ボタンのリセット
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-            
-            // 対象の表示
-            document.getElementById(sectionId).classList.add('active');
-            
-            // ボタンのハイライト（eventがある場合）
-            const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.onclick.toString().includes(sectionId));
-            if(btn) btn.classList.add('active');
-
-            window.scrollTo(0, 0);
+        function enterSite() {
+            // トップページを隠してメインコンテンツを表示
+            document.getElementById('hero-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            showSection('schedule'); // 最初はスケジュールを表示
+            window.scrollTo(0,0);
         }
 
-        /* --- 更新履歴モーダル --- */
-        function openNews() { document.getElementById('news-modal').style.display = 'flex'; }
-        function closeNewsBtn() { document.getElementById('news-modal').style.display = 'none'; }
-        function closeNews(e) { if (e.target.id === 'news-modal') document.getElementById('news-modal').style.display = 'none'; }
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            // ボタンのアクティブ化
+            const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.onclick.toString().includes(sectionId));
+            if(btn) btn.classList.add('active');
+            
+            window.scrollTo(0,0);
+        }
     </script>
 </body>
 </html>
